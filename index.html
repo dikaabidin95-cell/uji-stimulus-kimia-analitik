@@ -374,7 +374,7 @@
    */
 
   const EXAM_URL =
-"https://script.google.com/macros/s/AKfycbyCy7ehMWMAgZ271USUvpWogR1I0B3iOAJMxuW0pvVyg3rH1Cjaz7bn7h6uzlsqYIH7/exec";
+"https://script.google.com/macros/s/AKfycby30EnNVAm55LNZwa7BXG8XQT7BU3ScRVGRYqHnpnSrNpbtbLL_fUDQCdh2uiCRBvrs/exec";
 
 
   /*
@@ -893,9 +893,19 @@
 
   function bukaUjian() {
 
-    window.location.href = EXAM_URL;
-
+  if (!siswaTerpilih || !siswaTerpilih.id) {
+    tampilkanError("ID SISWA TIDAK DITEMUKAN.");
+    return;
   }
+
+  const url =
+    EXAM_URL +
+    "?id=" +
+    encodeURIComponent(siswaTerpilih.id);
+
+  window.location.href = url;
+
+}
 
 
   /*
