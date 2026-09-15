@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>UJI STIMULUS KIMIA ANALITIK</title>
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0,
+                 maximum-scale=1.0,
+                 user-scalable=no">
+
+  <title>Login Ujian Kimia</title>
+
+  <script src="https://unpkg.com/html5-qrcode"
+          type="text/javascript"></script>
 
   <style>
     * {
@@ -13,118 +22,919 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
+      padding: 16px;
+      background: #f5f7fa;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #eef5ff, #f8fbff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      background: white;
-      border-radius: 18px;
-      padding: 35px 25px;
       text-align: center;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    }
-
-    .icon {
-      font-size: 55px;
-      margin-bottom: 10px;
     }
 
     h1 {
-      margin: 0;
-      font-size: 28px;
-      color: #17365d;
+      margin: 8px 0 4px;
+      font-size: 25px;
     }
 
-    h2 {
-      margin: 8px 0 25px;
-      font-size: 18px;
-      font-weight: normal;
-      color: #555;
+    .subtitle {
+      color: #666;
+      margin-bottom: 15px;
     }
 
-    .info {
-      background: #f3f7fc;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 25px;
-      color: #444;
-      line-height: 1.7;
-    }
-
-    .button {
-      display: block;
+    #reader {
       width: 100%;
-      padding: 16px;
-      background: #1769aa;
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      transition: 0.2s;
+      max-width: 500px;
+      height: 55vh;
+      min-height: 360px;
+      max-height: 600px;
+      margin: auto;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
     }
 
-    .button:hover {
-      background: #0d4f82;
-      transform: translateY(-1px);
+    #reader video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
     }
 
-    .warning {
-      margin-top: 20px;
-      font-size: 13px;
+    #hasil {
+      max-width: 500px;
+      margin: 15px auto 0;
+      padding: 18px;
+      background: white;
+      border-radius: 12px;
+      font-size: 20px;
+    }
+
+    .menunggu {
       color: #777;
     }
 
-    .footer {
-      margin-top: 25px;
-      font-size: 12px;
-      color: #999;
+    .berhasil {
+      color: #168a3a;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #c62828;
+      font-weight: bold;
+    }
+
+    /* Tampilan MEMERIKSA IDENTITAS */
+    .proses-card {
+      max-width: 500px;
+      margin: 15px auto 0;
+      padding: 38px 24px 30px;
+      background: #122a2a;
+      border: 5px solid #f2c52e;
+      border-radius: 22px;
+      color: white;
+    }
+
+    .spinner {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 28px;
+      border: 9px dotted #f2c52e;
+      border-radius: 50%;
+      animation: berputar 1.2s linear infinite;
+    }
+
+    @keyframes berputar {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .proses-judul {
+      color: #f2c52e;
+      font-size: 27px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .proses-pesan {
+      font-size: 21px;
+      line-height: 1.45;
+      margin-bottom: 28px;
+    }
+
+    .proses-info {
+      padding: 18px;
+      border: 2px solid #496363;
+      border-radius: 16px;
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    /* Tahap konfirmasi identitas */
+    .konfirmasi {
+      color: #222;
+      line-height: 1.45;
+    }
+
+    .konfirmasi .nama {
+      font-size: 25px;
+      font-weight: bold;
+      margin: 14px 0 20px;
+    }
+
+    .konfirmasi .data {
+      font-size: 20px;
+      margin-bottom: 26px;
+    }
+
+    .pertanyaan {
+      font-size: 21px;
+      margin: 20px 0 18px;
+    }
+
+    .tombol-konfirmasi {
+      display: inline-block;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 10px;
+      background: #168a3a;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .tombol-konfirmasi:active {
+      transform: scale(0.98);
+    }
+
+    .tombol-izin {
+      display: inline-block;
+      padding: 14px 24px;
+      border: 0;
+      border-radius: 10px;
+      background: #168a3a;
+      color: white;
+      font-size: 19px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .tombol-izin:active {
+      transform: scale(0.98);
+    }
+
+    .tombol-buka {
+      display: inline-block;
+      padding: 14px 28px;
+      border: 0;
+      border-radius: 10px;
+      background: #168a3a;
+      color: white;
+      font-size: 19px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .tombol-buka:active {
+      transform: scale(0.98);
     }
   </style>
+
 </head>
 
 <body>
 
-  <div class="container">
+  <h1>LOGIN UJIAN KIMIA</h1>
 
-    <div class="icon">🧪</div>
+  <div class="subtitle">
+    Arahkan QR siswa ke kamera
+  </div>
 
-    <h1>UJI STIMULUS KIMIA ANALITIK</h1>
+  <div id="reader"></div>
 
-    <h2>TKA Kimia Kelas XII</h2>
+  <div id="hasil">
 
-    <div class="info">
-      <strong>Tanggal:</strong> 15 September 2026<br>
-      <strong>Waktu:</strong> 09.45 – 11.15 WIB<br>
-      <strong>Materi:</strong> KA-01 s.d. KA-08
-    </div>
-
-    <a
-      class="button"
-      href="https://script.google.com/macros/s/AKfycbwMpgOdPFv28a0rSzMHO9hRa0Knn8Fnj_qMbYaSfGMFyPkI8HKsN3O6iA18PWEgcxdK/exec"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      MULAI UJI STIMULUS
-    </a>
-
-    <div class="warning">
-      Silakan klik tombol hanya setelah mendapat instruksi dari guru.
-    </div>
-
-    <div class="footer">
-      Guru Kimia — SMA Negeri 4 Tasikmalaya
+    <div class="menunggu">
+      MENUNGGU SCAN
     </div>
 
   </div>
+
+
+<script>
+
+  /*
+   * ==================================================
+   * SCANNER
+   * Mengikuti pola Index ABSENSI yang sudah berhasil
+   * ==================================================
+   */
+
+  let scanner = null;
+  let sedangMemproses = false;
+  let siswaTerpilih = null;
+
+
+  /*
+   * ==================================================
+   * MULAI SCANNER
+   * ==================================================
+   */
+
+  function mulaiScanner() {
+
+    scanner = new Html5Qrcode("reader");
+
+    scanner.start(
+      {
+        facingMode: "environment"
+      },
+      {
+        fps: 10,
+        qrbox: {
+          width: 250,
+          height: 250
+        }
+      },
+
+      function(decodedText) {
+
+        if (sedangMemproses) {
+          return;
+        }
+
+        sedangMemproses = true;
+
+        tampilkanHasil(decodedText);
+
+      },
+
+      function(errorMessage) {
+
+        /*
+         * Tidak melakukan apa-apa.
+         * Scanner tetap aktif mencari QR.
+         */
+
+      }
+
+    )
+
+    .then(function() {
+
+      document.getElementById("hasil").innerHTML = `
+        <div class="menunggu">
+          MENUNGGU SCAN
+        </div>
+      `;
+
+    })
+
+    .catch(function(error) {
+
+      console.error(error);
+
+      tampilkanError(
+        "KAMERA TIDAK DAPAT DIAKTIFKAN."
+      );
+
+    });
+
+  }
+
+
+  /*
+   * ==================================================
+   * TAMPILAN PROSES
+   * ==================================================
+   */
+
+  function tampilkanProses() {
+
+    /*
+     * Scanner disembunyikan setelah QR terbaca.
+     * Tidak ada kamera yang memenuhi layar pada tahap proses.
+     */
+
+    document.getElementById("reader").style.display = "none";
+
+    document.getElementById("hasil").style.display = "none";
+
+    const proses = document.createElement("div");
+
+    proses.id = "prosesIdentitas";
+
+    proses.className = "proses-card";
+
+    proses.innerHTML = `
+      <div class="spinner"></div>
+
+      <div class="proses-judul">
+        MEMERIKSA IDENTITAS...
+      </div>
+
+      <div class="proses-pesan">
+        Data sedang diverifikasi
+      </div>
+
+      <div class="proses-info">
+        Anda boleh mencabut QR code
+        dan menunggu hasil
+      </div>
+    `;
+
+    document.body.appendChild(proses);
+
+  }
+
+
+  /*
+   * ==================================================
+   * HAPUS TAMPILAN PROSES
+   * ==================================================
+   */
+
+  function hapusTampilanProses() {
+
+    const proses =
+      document.getElementById("prosesIdentitas");
+
+    if (proses) {
+      proses.remove();
+    }
+
+    document.getElementById("hasil").style.display = "block";
+
+  }
+
+
+  /*
+   * ==================================================
+   * WEB APP UJIAN v4.4.1
+   * ==================================================
+   */
+
+  const EXAM_URL =
+  "https://script.google.com/macros/s/AKfycbwMpgOdPFv28a0rSzMHO9hRa0Knn8Fnj_qMbYaSfGMFyPkI8HKsN3O6iA18PWEgcxdK/exec";
+
+
+  /*
+   * ==================================================
+   * HASIL SCAN
+   * ==================================================
+   */
+
+  function tampilkanHasil(qrId) {
+
+    tampilkanProses();
+
+
+    /*
+     * ==================================================
+     * API APPS SCRIPT
+     * ==================================================
+     */
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbwxeW6ZSki-s_3m04SUolyJ_Q1zEbGTgNNDDE4J4GVEV-gAyvJaspzzcLRhCFw5OE1yow/exec";
+
+
+    /*
+     * Callback tetap.
+     * Dipertahankan karena ini adalah versi
+     * yang sudah terbukti berhasil.
+     */
+
+    const namaCallback =
+      "verifikasiCallback";
+
+
+    /*
+     * Fungsi menerima hasil dari Apps Script
+     */
+
+    window[namaCallback] = function(data) {
+
+      try {
+
+        hapusTampilanProses();
+
+
+        if (
+          data.berhasil &&
+          data.status === "SISWA_DITEMUKAN"
+        ) {
+
+          siswaTerpilih = {
+            id: data.id,
+            nis: data.nis,
+            nama: data.nama,
+            kelas: data.kelas
+          };
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="konfirmasi">
+
+              <div class="berhasil">
+                ● IDENTITAS DITEMUKAN
+              </div>
+
+              <div class="nama">
+                ${data.nama}
+              </div>
+
+              <div class="data">
+                NIS : ${data.nis}
+                <br>
+                KELAS : ${data.kelas}
+              </div>
+
+              <div class="pertanyaan">
+                Apakah identitas ini benar?
+              </div>
+
+              <button
+                class="tombol-konfirmasi"
+                onclick="konfirmasiIdentitas()">
+                YA, IDENTITAS SAYA BENAR
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+        else {
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="error">
+              ● IDENTITAS TIDAK DITEMUKAN
+            </div>
+
+            <br>
+
+            ID:
+            <strong>
+              ${qrId}
+            </strong>
+
+          `;
+
+        }
+
+      }
+
+      finally {
+
+        delete window[namaCallback];
+
+      }
+
+    };
+
+
+    /*
+     * ==================================================
+     * URL API VERIFIKASI
+     * ==================================================
+     */
+
+    const url =
+      API_URL +
+      "?mode=verifikasi" +
+      "&qr=" +
+      encodeURIComponent(qrId) +
+      "&callback=" +
+      namaCallback;
+
+
+    /*
+     * ==================================================
+     * KIRIM REQUEST JSONP
+     * ==================================================
+     */
+
+    const script =
+      document.createElement("script");
+
+    script.src = url;
+
+
+    script.onerror = function() {
+
+      hapusTampilanProses();
+
+      document.getElementById("hasil").innerHTML = `
+
+        <div class="error">
+          ● GAGAL MENGHUBUNGI SERVER
+        </div>
+
+      `;
+
+      delete window[namaCallback];
+
+    };
+
+
+    document.body.appendChild(script);
+
+
+    /*
+     * Hapus script setelah selesai
+     */
+
+    setTimeout(function() {
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
+    }, 10000);
+
+  }
+
+
+  /*
+   * ==================================================
+   * KONFIRMASI IDENTITAS → CATAT KE UJIAN
+   * ==================================================
+   */
+
+  function konfirmasiIdentitas() {
+
+    if (!siswaTerpilih) {
+      tampilkanError("DATA SISWA TIDAK DITEMUKAN.");
+      return;
+    }
+
+    tampilkanProses();
+
+    const proses =
+      document.getElementById("prosesIdentitas");
+
+    proses.querySelector(".proses-judul").textContent =
+      "MENCATAT DATA UJIAN...";
+
+    proses.querySelector(".proses-pesan").textContent =
+      "Data identitas sedang dicatat";
+
+    proses.querySelector(".proses-info").textContent =
+      "Mohon tunggu sebentar";
+
+    /*
+     * Callback khusus pencatatan UJIAN.
+     * Berbeda dari callback verifikasi agar tidak saling bertabrakan.
+     */
+    const namaCallback =
+      "catatUjianCallback";
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbwxeW6ZSki-s_3m04SUolyJ_Q1zEbGTgNNDDE4J4GVEV-gAyvJaspzzcLRhCFw5OE1yow/exec";
+
+    window[namaCallback] = function(data) {
+
+      try {
+
+        hapusTampilanProses();
+
+        if (
+          data.status === "TERVERIFIKASI" ||
+          data.status === "SUDAH_TERVERIFIKASI"
+        ) {
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="konfirmasi">
+
+              <div class="berhasil">
+                ● IDENTITAS TERVERIFIKASI
+              </div>
+
+              <div class="nama">
+                ${data.nama}
+              </div>
+
+              <div class="data">
+                NIS : ${data.id}<br>
+                KELAS : ${data.kelas}
+              </div>
+
+              <div class="pertanyaan">
+                Identitas siswa sudah tercatat.
+              </div>
+
+              <button
+                class="tombol-izin"
+                onclick="izinkanUjian()">
+                IZINKAN UJIAN
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+        else {
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="error">
+              ● GAGAL MENCATAT DATA UJIAN
+            </div>
+
+            <br>
+
+            ${data.pesan || "Terjadi kesalahan."}
+
+          `;
+
+        }
+
+      }
+
+      finally {
+        delete window[namaCallback];
+      }
+
+    };
+
+    const url =
+      API_URL +
+      "?mode=catat_ujian" +
+      "&qr=" +
+      encodeURIComponent(siswaTerpilih.id) +
+      "&callback=" +
+      namaCallback;
+
+    const script =
+      document.createElement("script");
+
+    script.src = url;
+
+    script.onerror = function() {
+
+      hapusTampilanProses();
+
+      document.getElementById("hasil").innerHTML = `
+
+        <div class="error">
+          ● GAGAL MENGHUBUNGI SERVER
+        </div>
+
+      `;
+
+      delete window[namaCallback];
+
+    };
+
+    document.body.appendChild(script);
+
+    setTimeout(function() {
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
+    }, 10000);
+
+  }
+
+
+  /*
+   * ==================================================
+   * IZINKAN UJIAN
+   * TERVERIFIKASI → DIIZINKAN
+   * ==================================================
+   */
+
+  function izinkanUjian() {
+
+    if (!siswaTerpilih) {
+      tampilkanError("DATA SISWA TIDAK DITEMUKAN.");
+      return;
+    }
+
+    tampilkanProses();
+
+    const proses =
+      document.getElementById("prosesIdentitas");
+
+    proses.querySelector(".proses-judul").textContent =
+      "MEMERIKSA IZIN UJIAN...";
+
+    proses.querySelector(".proses-pesan").textContent =
+      "Status ujian sedang diperbarui";
+
+    proses.querySelector(".proses-info").textContent =
+      "Mohon tunggu sebentar";
+
+    const namaCallback =
+      "izinkanUjianCallback";
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbwxeW6ZSki-s_3m04SUolyJ_Q1zEbGTgNNDDE4J4GVEV-gAyvJaspzzcLRhCFw5OE1yow/exec";
+
+    window[namaCallback] = function(data) {
+
+      try {
+
+        hapusTampilanProses();
+
+        if (
+          data.berhasil &&
+          data.status === "DIIZINKAN"
+        ) {
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="konfirmasi">
+
+              <div class="berhasil">
+                ● UJIAN DIIZINKAN
+              </div>
+
+              <div class="nama">
+                ${data.nama}
+              </div>
+
+              <div class="data">
+                NIS : ${data.id}<br>
+                KELAS : ${data.kelas}
+              </div>
+
+              <div class="pertanyaan">
+                Siswa diizinkan mengikuti ujian.
+              </div>
+
+              <button
+                class="tombol-buka"
+                onclick="bukaUjian()">
+                BUKA UJIAN
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+        else if (
+          data.status === "SUDAH_DIIZINKAN"
+        ) {
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="konfirmasi">
+
+              <div class="berhasil">
+                ● UJIAN SUDAH DIIZINKAN
+              </div>
+
+              <div class="nama">
+                ${data.nama}
+              </div>
+
+              <div class="data">
+                NIS : ${data.id}<br>
+                KELAS : ${data.kelas}
+              </div>
+
+              <div class="pertanyaan">
+                Siswa sudah diizinkan mengikuti ujian.
+              </div>
+
+              <button
+                class="tombol-buka"
+                onclick="bukaUjian()">
+                BUKA UJIAN
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+        else {
+
+          document.getElementById("hasil").innerHTML = `
+
+            <div class="error">
+              ● UJIAN BELUM DAPAT DIIZINKAN
+            </div>
+
+            <br>
+
+            ${data.pesan || "Terjadi kesalahan."}
+
+          `;
+
+        }
+
+      }
+
+      finally {
+        delete window[namaCallback];
+      }
+
+    };
+
+    const url =
+      API_URL +
+      "?mode=izinkan_ujian" +
+      "&qr=" +
+      encodeURIComponent(siswaTerpilih.id) +
+      "&callback=" +
+      namaCallback;
+
+    const script =
+      document.createElement("script");
+
+    script.src = url;
+
+    script.onerror = function() {
+
+      hapusTampilanProses();
+
+      document.getElementById("hasil").innerHTML = `
+
+        <div class="error">
+          ● GAGAL MENGHUBUNGI SERVER
+        </div>
+
+      `;
+
+      delete window[namaCallback];
+
+    };
+
+    document.body.appendChild(script);
+
+    setTimeout(function() {
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
+    }, 10000);
+
+  }
+
+
+  /*
+   * ==================================================
+   * BUKA UJIAN
+   * ==================================================
+   */
+
+  function bukaUjian() {
+
+    window.location.href = EXAM_URL;
+
+  }
+
+
+  /*
+   * ==================================================
+   * ERROR
+   * ==================================================
+   */
+
+  function tampilkanError(pesan) {
+
+    document.getElementById("reader").style.display = "none";
+
+    document.getElementById("hasil").style.display = "block";
+
+    document.getElementById("hasil").innerHTML = `
+
+      <div class="error">
+        ● ${pesan}
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * ==================================================
+   * MULAI
+   * ==================================================
+   */
+
+  window.onload = function() {
+
+    mulaiScanner();
+
+  };
+
+</script>
+
 
 </body>
 </html>
